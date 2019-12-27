@@ -1,0 +1,31 @@
+{
+    "name": "commune/platform-dueros",
+    "description": "dueros platform adapter for chatbot framework commune/studio-hyperf",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "thirdgerb",
+            "email": "thirdgerb@gmail.com"
+        }
+    ],
+    "minimum-stability": "RC",
+    "autoload": {
+      "psr-4": {
+          "Commune\\Platform\\DuerOS\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+          "Commune\\Test\\Studio\\DuerOS\\": "tests"
+      }
+    },
+    "require": {
+        "php": ">=7.2",
+        "commune/chatbot-hyperf": "~0.1.0",
+        "dueros/bot-sdk": "^2.2"
+    },
+    "require-dev": {
+        "swoft/swoole-ide-helper": "^4.4"
+    }
+}
