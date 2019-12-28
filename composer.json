@@ -9,7 +9,6 @@
             "email": "thirdgerb@gmail.com"
         }
     ],
-    "minimum-stability": "RC",
     "autoload": {
       "psr-4": {
           "Commune\\Platform\\DuerOS\\": "src/"
@@ -20,6 +19,7 @@
           "Commune\\Test\\Studio\\DuerOS\\": "tests"
       }
     },
+    "minimum-stability": "RC",
     "require": {
         "php": ">=7.2",
         "commune/chatbot-hyperf": "~0.1.0",
