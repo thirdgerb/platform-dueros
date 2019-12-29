@@ -190,7 +190,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             ]
         );
 
-        if (!$this->botOption->debug) {
+        if (!$this->botOption->chatbot->debug) {
             $this->getCertificate()->enableVerifyRequestSign();
         }
 
@@ -200,7 +200,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             $this->logger->warning(
                 static::class . ' request failed certificate',
                 [
-                    'debug' => $this->botOption->debug,
+                    'debug' => $this->botOption->chatbot->debug,
                     'servers' => $this->getSwooleRequest()->server,
                 ]
             );

@@ -10,6 +10,7 @@ use Commune\Platform\DuerOS\Constants\Dictionary;
 use Commune\Platform\DuerOS\Providers\RenderServiceProvider;
 
 /**
+ * @property-read string $name 技能的名称.
  * @property-read string $privateKey 私钥的文件路径.
  * @property-read array $intentMapping duerOS 的intent 变成本地的Intent
  * @property-read array[] $entityMapping duerOs 的entity 变成本地的entity
@@ -22,6 +23,7 @@ class DuerOSComponent extends ComponentOption
     public static function stub(): array
     {
         return [
+            'name' => 'commune',
 
             'renderServiceProvider' => RenderServiceProvider::class,
 
