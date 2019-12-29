@@ -2,6 +2,7 @@
 
 namespace Commune\Platform\DuerOS\Servers;
 
+use Baidu\Duer\Botsdk\Card\BaseCard;
 use Baidu\Duer\Botsdk\Card\StandardCard;
 use Commune\Chatbot\App\Messages\Media\Audio;
 use Commune\Chatbot\App\Messages\Text;
@@ -107,9 +108,9 @@ class DuerChatRequest extends SwooleHttpMessageRequest
     public $directives = [];
 
     /**
-     * @var array
+     * @var null|BaseCard
      */
-    public $cards = [];
+    public $card;
 
     /**
      * @var string
@@ -329,7 +330,12 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         // 卡片
         } elseif ($message instanceof AbsCard) {
-            $this->cards[] = $message;
+            $card = $message->toDuerOSCard();
+            $title = $card->getData('title');
+            if (empty($title)) {
+                $card->setTitle($this->getSceneName());
+            }
+            $this->card = $card;
 
         // verbose
         } elseif ($message instanceof VerbalMsg) {
@@ -356,19 +362,8 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             $data['directives'] = $this->directives;
         }
 
-        if (!empty($this->cards)) {
-            // 补全 card 的title. 做法还是有点脏.
-            $data['card'] = array_map(
-                function(AbsCard $card) use ($sceneName){
-                    $duerCard = $card->toDuerOSCard();
-                    $title = $duerCard->getData('title');
-                    if (empty($title)) {
-                        $duerCard->setTitle($title);
-                    }
-                    return $duerCard;
-                },
-                $this->cards
-            );
+        if (!empty($this->card)) {
+            $data['card'] = $this->card;
         }
 
         $output =$this->duerResponse->build($data);
