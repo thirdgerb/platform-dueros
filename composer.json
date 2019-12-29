@@ -19,10 +19,9 @@
           "Commune\\Test\\Studio\\DuerOS\\": "tests"
       }
     },
-    "minimum-stability": "RC",
     "require": {
         "php": ">=7.2",
-        "commune/chatbot-hyperf": "~0.1.0",
+        "commune/chatbot-hyperf": "~0.1.0@dev",
         "dueros/bot-sdk": "^2.2"
     },
     "require-dev": {
