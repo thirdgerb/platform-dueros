@@ -8,6 +8,7 @@ use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Replies\SSML;
+use Commune\Chatbot\Blueprint\Message\Tags\Conversational;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\App\Messages\Events\QuitEvt;
 use Commune\Chatbot\App\Messages\Events\StartEvt;
@@ -102,6 +103,8 @@ class DuerChatRequest extends SwooleHttpMessageRequest
      * @var array
      */
     public $cards = [];
+
+    public $defaultCard = [];
 
     /**
      * @var string
@@ -326,11 +329,20 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         // verbose
         } elseif ($message instanceof VerbalMsg) {
             $this->outSpeech .= $message->getText();
+
+            // 尝试生成默认卡片
+            if ($message instanceof Conversational && empty($this->defaultCard)) {
+                $this->defaultCard = [
+                    'type' => 'standard',
+                    'token' => $this->createUuId(),
+                    'title' => $this->duerOSOption->name,
+                    'content' => $message->getText(),
+                    'cueWords' => $message->getSuggestions(),
+                ];
+            }
         }
 
-
-    // todo 还有模板. body template
-
+        // todo 还有模板. body template
         // 其它情况暂不处理.
     }
 
@@ -346,6 +358,10 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         if (!empty($this->directives)) {
             $data['directives'] = $this->directives;
+        }
+
+        if (empty($this->cards) && !empty($this->defaultCard)) {
+            $this->cards[] = $this->defaultCard;
         }
 
         if (!empty($this->cards)) {
@@ -378,7 +394,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         $this->conversation->fire($event);
 
         // 完成渲染并退出.
-        $this->response->end($output);
+        $this->response->write($output);
     }
 
     public function getPlatformId(): string
