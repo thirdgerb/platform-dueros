@@ -1,12 +1,6 @@
 <?php
 
-/**
- * Class DuerChatRequest
- * @package Commune\Platform\DuerOS\Servers
- */
-
 namespace Commune\Platform\DuerOS\Servers;
-
 
 use Commune\Chatbot\App\Messages\Media\Audio;
 use Commune\Chatbot\App\Messages\Text;
@@ -139,6 +133,17 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         $this->response = $response;
         $this->duerOSOption = $duerOSOption;
         $this->response->header('Content-Type', 'application/json;charset=utf-8');
+        // 校验环节
+        $symfonyRequest = HttpBabel::requestFromSwooleToSymfony($request);
+
+        $this->certificate = new DuerOSCertificate(
+            $logger,
+            $privateKeyContent,
+            $symfonyRequest->server->all(),
+            $rawInput
+        );
+        $this->duerRequest = static::wrapBotRequest($rawInput);
+        $this->duerResponse = static::wrapBotResponse($this->duerRequest);
 
         parent::__construct(
             $option,
@@ -147,19 +152,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             $request,
             $response
         );
-
-        // 校验环节
-        $symfonyRequest = HttpBabel::requestFromSwooleToSymfony($request);
-        $this->certificate = new DuerOSCertificate(
-            $logger,
-            $privateKeyContent,
-            $symfonyRequest->server->all(),
-            $rawInput
-        );
-
-        $this->duerRequest = static::wrapBotRequest($rawInput);
-        $this->duerResponse = static::wrapBotResponse($this->duerRequest);
-
 
         $this->duerResponsePolicy();
         $this->nluParser = new DuerOSNLUParser($this->duerRequest, $this->duerOSOption);
@@ -526,12 +518,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             'requestId' => $this->getDuerRequest()->getLogId(),
             'userId' => $this->getDuerRequest()->getUserId(),
         ] + $context;
-    }
-
-
-    public static function getMockingQuery(SwooleRequest $request) : string
-    {
-        return $request->get['mocking'] ?? '';
     }
 
 

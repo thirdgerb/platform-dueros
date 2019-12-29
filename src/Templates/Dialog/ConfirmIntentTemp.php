@@ -16,10 +16,10 @@ use Commune\Chatbot\Blueprint\Conversation\Conversation;
 class ConfirmIntentTemp extends QuestionTemp
 {
 
-    protected function renderDirective(Question $question, Conversation $conversation): array
+    protected function renderDirective(Question $question, Conversation $conversation, array $suggestions): array
     {
         if (!$question instanceof ConfirmIntent) {
-            return parent::renderDirective($question, $conversation);
+            return parent::renderDirective($question, $conversation, $suggestions);
         }
         $request = $this->getDuerRequest($conversation);
         $intentName = $question->getIntentName();

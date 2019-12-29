@@ -14,7 +14,6 @@ use Commune\Platform\DuerOS\Providers\RenderServiceProvider;
  * @property-read array $intentMapping duerOS 的intent 变成本地的Intent
  * @property-read array[] $entityMapping duerOs 的entity 变成本地的entity
  * @property-read string $rePrompt 用户没有及时响应多轮对话时的回复.
- * @property-read array $requestStub 模拟请求的数据.
  * @property-read string $renderServiceProvider 默认的rendering服务注册
  */
 class DuerOSComponent extends ComponentOption
@@ -55,49 +54,6 @@ class DuerOSComponent extends ComponentOption
                 ]
 
             ],
-
-            // request stub
-            'requestStub' => [
-                'version' => 'v2.0',
-                'session' =>
-                    [
-                        'new' => true,
-                        'sessionId' => 'test-by-mock',
-                    ],
-                'context' =>
-                    [
-                        'System' =>
-                            [
-                                'user' => [
-                                    'userId' => 'test-user-id',
-                                    'userInfo' => [],
-                                ],
-                                'application' => [
-                                    'applicationId' => 'test-app-id',
-                                ],
-                            ],
-
-                    ],
-                'request' =>
-                    [
-                        'type' => 'IntentRequest',
-                        'requestId' => '',
-                        'query' => [
-                            'type' => 'TEXT',
-                            'original' => '',
-                        ],
-
-                        "intents" => [
-                            [
-                                "name"=> "ai.dueros.common.default_intent",
-                                "slots"=> [],
-                                "confirmationStatus" => "NONE",
-                            ],
-                        ],
-                        'timestamp' => '0',
-                    ],
-            ],
-
         ];
     }
 

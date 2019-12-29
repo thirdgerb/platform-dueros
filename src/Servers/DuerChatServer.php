@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Class DuerOSServer
- * @package Commune\Platform\DuerOS\Servers
- */
-
 namespace Commune\Platform\DuerOS\Servers;
 
 
@@ -51,6 +46,10 @@ class DuerChatServer implements OnRequestInterface
      */
     protected $privateKeyContent;
 
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * DuerOSServer constructor.
@@ -67,6 +66,10 @@ class DuerChatServer implements OnRequestInterface
             ->getServer();
 
         $this->duerOSOption =$this->chatApp->getProcessContainer()->get(DuerOSComponent::class);
+
+        $this->logger = $this->chatApp
+            ->getProcessContainer()
+            ->get(LoggerInterface::class);
     }
 
     protected function getPrivateKeyContent() : string
@@ -93,6 +96,15 @@ class DuerChatServer implements OnRequestInterface
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
+        $method = $request->server['request_method'] ?? null;
+        // 技能探活.
+        if ($method === 'HEAD') {
+            $response->status(204);
+            $response->end();
+            $this->logger->info('receive dueros exploration, response status 204');
+            return;
+        }
+
         $chatbotRequest = $this->generateRequest($request, $response);
 
         try {
@@ -109,11 +121,6 @@ class DuerChatServer implements OnRequestInterface
 
     protected function generateRequest(SwooleRequest $request, SwooleResponse $response) : DuerChatRequest
     {
-        $mock = DuerChatRequest::getMockingQuery($request);
-        if ($this->botOption->chatbot->debug && !empty($mock)) {
-            return $this->makeMockDuerChatRequest($request, $response, $mock);
-        }
-
         $privateKeyContent = $this->getPrivateKeyContent();
         return new DuerChatRequest(
             $this->botOption,
@@ -127,39 +134,5 @@ class DuerChatServer implements OnRequestInterface
         );
     }
 
-
-    protected function makeMockDuerChatRequest(SwooleRequest $request, SwooleResponse $response, string $mock) : DuerChatRequest
-    {
-        $rawInput = DuerChatRequest::fetchRawInputOfRequest($request);
-
-        $requestData = [];
-        if (!empty($rawInput)) {
-            $requestData = json_decode($rawInput, true) ?? [];
-        }
-
-        $requestData = empty($requestData)
-            ? $this->duerOSOption->requestStub
-            : array_replace_recursive($this->duerOSOption->requestStub, $requestData);
-
-        // 敏感数据脱敏. 避免有知道mock可用的做坏事.
-        $requestData['session']['sessionId'] = 'test-session-id';
-        $requestData['context']['System']['user']['userId'] = 'test-user-id';
-        $requestData['context']['System']['user']['userInfo'] = [];
-        $requestData['request']['query']['original'] = $mock;
-        $requestData['request']['requestId'] = DuerChatRequest::generateUuid();
-        $requestData['request']['timestamp'] = strval(time());
-
-        return new DuerChatRequest(
-            $this->botOption,
-            $this->duerOSOption,
-            $this->swooleServer,
-            $this->chatApp->getProcessContainer()[LoggerInterface::class],
-            $request,
-            $response,
-            json_encode($requestData),
-            ''
-        );
-
-    }
 
 }
