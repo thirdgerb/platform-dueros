@@ -52,7 +52,7 @@ class QuestionTemp extends AbstractTemp
         return array_merge(
             $messages,
             $this->renderQuestion($reply, $conversation),
-            $card
+            [$card]
         );
 
     }
