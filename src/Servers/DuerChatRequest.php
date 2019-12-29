@@ -2,6 +2,7 @@
 
 namespace Commune\Platform\DuerOS\Servers;
 
+use Baidu\Duer\Botsdk\Card\StandardCard;
 use Commune\Chatbot\App\Messages\Media\Audio;
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
@@ -85,11 +86,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
      * @var bool
      */
     protected $valid;
-
-    /**
-     * @var array
-     */
-    protected $defaultCard = [];
 
     /**
      * @var string
@@ -333,22 +329,11 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         // 卡片
         } elseif ($message instanceof AbsCard) {
-            $this->cards[] = $message->toCardArray();
+            $this->cards[] = $message;
 
         // verbose
         } elseif ($message instanceof VerbalMsg) {
             $this->outSpeech .= $message->getText();
-
-            // 尝试生成默认卡片
-            if ($message instanceof Conversational && empty($this->defaultCard)) {
-                $this->defaultCard = [
-                    'type' => 'standard',
-                    'token' => $this->createUuId(),
-                    'title' => $this->getSceneName(),
-                    'content' => $message->getText(),
-                    'cueWords' => $message->getSuggestions(),
-                ];
-            }
         }
 
         // todo 还有模板. body template
@@ -371,19 +356,16 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             $data['directives'] = $this->directives;
         }
 
-        if (empty($this->cards) && !empty($this->defaultCard)) {
-            $this->cards[] = $this->defaultCard;
-        }
-
         if (!empty($this->cards)) {
             // 补全 card 的title. 做法还是有点脏.
             $data['card'] = array_map(
-                function(array $card) use ($sceneName){
-                    if (empty($card['title'])) {
-                        $card['title'] = $sceneName;
+                function(AbsCard $card) use ($sceneName){
+                    $duerCard = $card->toDuerOSCard();
+                    $title = $duerCard->getData('title');
+                    if (empty($title)) {
+                        $duerCard->setTitle($title);
                     }
-
-                    return $card;
+                    return $duerCard;
                 },
                 $this->cards
             );

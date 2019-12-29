@@ -8,6 +8,8 @@
 namespace Commune\Platform\DuerOS\Messages\Cards;
 
 
+use Baidu\Duer\Botsdk\Card\BaseCard;
+use Baidu\Duer\Botsdk\Card\StandardCard;
 use Commune\Platform\DuerOS\Messages\AbsCard;
 use Commune\Support\Uuid\HasIdGenerator;
 use Commune\Support\Uuid\IdGeneratorHelper;
@@ -49,11 +51,20 @@ class CueWordsCard extends AbsCard implements HasIdGenerator
     public function toCardArray(): array
     {
         return [
-            'type' => 'standard',
             'title' => $this->title,
             'content' => $this->content,
             'cueWords' => $this->suggestions
         ];
+    }
+
+    public function toDuerOSCard(): BaseCard
+    {
+        // sdk 开发不太符合语法规范, 有条件自己重做一个算了.
+        $card = new StandardCard();
+        $card->addCueWords($this->suggestions);
+        $card->setTitle($this->title);
+        $card->setContent($this->content);
+        return $card;
     }
 
 
