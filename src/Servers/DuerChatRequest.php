@@ -352,8 +352,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         // todo 目前没有别的办法处理了. 除非duerOS 修改有问题的api
         $data['reprompt'] = $this->rePrompt;
 
-        $sceneName = $this->getSceneName();
-
         if (!empty($this->outSpeech)) {
             $data['outputSpeech'] = '<speak>'.trim($this->outSpeech) .'</speak>';
         }
