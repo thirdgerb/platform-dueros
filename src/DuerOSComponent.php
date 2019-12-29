@@ -10,12 +10,12 @@ use Commune\Platform\DuerOS\Constants\Dictionary;
 use Commune\Platform\DuerOS\Providers\RenderServiceProvider;
 
 /**
- * @property-read string $name 技能的名称.
  * @property-read string $privateKey 私钥的文件路径.
  * @property-read array $intentMapping duerOS 的intent 变成本地的Intent
  * @property-read array[] $entityMapping duerOs 的entity 变成本地的entity
  * @property-read string $rePrompt 用户没有及时响应多轮对话时的回复.
  * @property-read string $renderServiceProvider 默认的rendering服务注册
+ * @property-read string[] $sceneNames 场景映射的技能名称
  */
 class DuerOSComponent extends ComponentOption
 {
@@ -23,7 +23,6 @@ class DuerOSComponent extends ComponentOption
     public static function stub(): array
     {
         return [
-            'name' => 'commune',
 
             'renderServiceProvider' => RenderServiceProvider::class,
 
@@ -55,6 +54,9 @@ class DuerOSComponent extends ComponentOption
                     Dictionary::SYSTEM_NUMBER => 'ordinal'
                 ]
 
+            ],
+
+            'sceneNames' => [
             ],
         ];
     }

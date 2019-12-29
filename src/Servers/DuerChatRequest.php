@@ -86,6 +86,17 @@ class DuerChatRequest extends SwooleHttpMessageRequest
      */
     protected $valid;
 
+    /**
+     * @var array
+     */
+    protected $defaultCard = [];
+
+    /**
+     * @var string
+     */
+    protected $contextDesc;
+
+
     /*--------- output --------*/
 
     /**
@@ -103,8 +114,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
      * @var array
      */
     public $cards = [];
-
-    public $defaultCard = [];
 
     /**
      * @var string
@@ -335,7 +344,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
                 $this->defaultCard = [
                     'type' => 'standard',
                     'token' => $this->createUuId(),
-                    'title' => $this->duerOSOption->name,
+                    'title' => $this->getSceneName(),
                     'content' => $message->getText(),
                     'cueWords' => $message->getSuggestions(),
                 ];
@@ -529,17 +538,22 @@ class DuerChatRequest extends SwooleHttpMessageRequest
     protected function wrapContext(array $context) : array
     {
         return [
-            'name' => $this->duerOSOption->name,
+            'scene' => $this->getScene(),
             'sessionId' => $this->getDuerRequest()->getSession()->sessionId,
             'requestId' => $this->getDuerRequest()->getLogId(),
             'userId' => $this->getDuerRequest()->getUserId(),
         ] + $context;
     }
 
-
     public function getScene(): ? string
     {
         return $this->getSwooleRequest()->get['scene'] ?? null;
     }
 
+    public function getSceneName() : string
+    {
+        $sceneNames = $this->duerOSOption->sceneNames;
+        $scene = $this->getScene();
+        return $sceneNames[$scene] ?? '';
+    }
 }
