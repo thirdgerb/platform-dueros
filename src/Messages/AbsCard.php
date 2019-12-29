@@ -12,8 +12,6 @@ use Commune\Chatbot\Framework\Messages\AbsMessage;
 
 abstract class AbsCard extends AbsMessage
 {
-    abstract public function getType() : string;
-
     abstract public function toCardArray() : array;
 
     public function getMessageType(): string

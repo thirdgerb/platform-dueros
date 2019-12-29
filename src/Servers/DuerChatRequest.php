@@ -361,6 +361,8 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         // todo 目前没有别的办法处理了. 除非duerOS 修改有问题的api
         $data['reprompt'] = $this->rePrompt;
 
+        $sceneName = $this->getSceneName();
+
         if (!empty($this->outSpeech)) {
             $data['outputSpeech'] = '<speak>'.trim($this->outSpeech) .'</speak>';
         }
@@ -374,7 +376,17 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         }
 
         if (!empty($this->cards)) {
-            $data['card'] = $this->cards;
+            // 补全 card 的title. 做法还是有点脏.
+            $data['card'] = array_map(
+                function(array $card) use ($sceneName){
+                    if (empty($card['title'])) {
+                        $card['title'] = $sceneName;
+                    }
+
+                    return $card;
+                },
+                $this->cards
+            );
         }
 
         $output =$this->duerResponse->build($data);

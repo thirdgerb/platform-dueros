@@ -15,6 +15,8 @@ use Commune\Chatbot\Blueprint\Message\QA\Question;
 use Commune\Chatbot\Blueprint\Message\ReplyMsg;
 use Commune\Chatbot\Contracts\Translator;
 use Commune\Chatbot\Framework\Exceptions\ChatbotLogicException;
+use Commune\Platform\DuerOS\Messages\AbsCard;
+use Commune\Platform\DuerOS\Messages\Cards\CueWordsCard;
 use Commune\Platform\DuerOS\Messages\Directives\OrdinalDirective;
 
 class QuestionTemp extends AbstractTemp
@@ -46,8 +48,23 @@ class QuestionTemp extends AbstractTemp
         $suggestions = $this->parseSuggestions($reply);
         $this->expectResponse($reply, $conversation, $suggestions);
         $messages = $this->renderDirective($reply, $conversation, $suggestions);
-        return array_merge($messages, $this->renderQuestion($reply, $conversation));
+        $card = $this->renderCard($reply, $suggestions);
+        return array_merge(
+            $messages,
+            $this->renderQuestion($reply, $conversation),
+            $card
+        );
 
+    }
+
+    /**
+     * @param Question $question
+     * @param string[] $suggestions
+     * @return AbsCard
+     */
+    public function renderCard(Question $question, array $suggestions) : AbsCard
+    {
+        return new CueWordsCard('', $question->getQuery(), $suggestions);
     }
 
     protected function parseSuggestions(Question $question) : array
