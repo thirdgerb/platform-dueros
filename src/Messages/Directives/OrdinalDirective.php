@@ -18,7 +18,7 @@ class OrdinalDirective extends AbsDirective
     /**
      * @var array
      */
-    protected $suggestions;
+    protected $suggestions = [];
 
     /**
      * @var string|null
