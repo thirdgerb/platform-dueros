@@ -43,7 +43,8 @@ class CueWordsCard extends AbsCard implements HasIdGenerator
     {
         $this->title = $title;
         $this->content = $content;
-        $this->suggestions = $suggestions;
+        // 去掉 suggestions 的序号.
+        $this->suggestions = array_values($suggestions);
         parent::__construct();
     }
 
