@@ -88,7 +88,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
     /**
      * @var string
      */
-    protected $contextDesc;
+    protected $rawInput;
 
 
     /*--------- output --------*/
@@ -150,6 +150,7 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         );
         $this->duerRequest = static::wrapBotRequest($rawInput);
         $this->duerResponse = static::wrapBotResponse($this->duerRequest);
+        $this->rawInput = $rawInput;
 
         parent::__construct(
             $option,
@@ -165,10 +166,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
         // 默认回复
         $this->rePrompt = $this->duerOSOption->rePrompt;
 
-        // debug 状态下方便调试, 记录请求
-        if ($this->botOption->chatbot->debug) {
-            $this->logger->debug("duerOS Request: $rawInput");
-        }
     }
 
     /**
@@ -180,6 +177,11 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         $this->conversation->share(DuerRequest::class, $this->duerRequest);
         $this->conversation->share(DuerResponse::class, $this->duerResponse);
+
+        // debug 状态下方便调试, 记录请求
+        if ($this->botOption->chatbot->debug) {
+            $this->logger->debug('duerOS Request: ' . $this->rawInput);
+        }
     }
 
     /**
