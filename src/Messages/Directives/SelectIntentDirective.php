@@ -62,7 +62,7 @@ class SelectIntentDirective extends AbsDirective
             $i++;
 
             if (array_key_exists($index, $this->intents)) {
-                $options[] = $this->wrapOption($i, $index, $suggestion, $this->intents[$index]);
+                $options[] = $this->wrapOption($i, $suggestion, $this->intents[$index]);
             }
 
         }
