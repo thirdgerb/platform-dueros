@@ -3,4 +3,4 @@
 
 底层使用百度智能音箱的 [DuerOS SDK](https://github.com/dueros/bot-sdk).
 
-developing...
+相关文档请查看 [开发手册](https://communechatbot.com/docs/#/zh-cn/setup/dueros)
