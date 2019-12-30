@@ -71,10 +71,6 @@ class OrdinalDirective extends AbsDirective
         $i = 0;
         foreach ($this->suggestions as $index => $suggestion) {
             $i++;
-
-            if (is_string($index)) {
-                $options[] = $this->wrapOption($i, $index);
-            }
             $options[] = $this->wrapOption($i, $suggestion);
         }
 
