@@ -36,6 +36,10 @@ class SelectIntentDirective extends AbsDirective
         parent::__construct();
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['intents', 'suggestions']);
+    }
 
     /**
      * @return array
@@ -88,6 +92,11 @@ class SelectIntentDirective extends AbsDirective
             ],
         ];
         return $option;
+    }
+
+    public static function mock()
+    {
+        return new static(['a', 'b'], ['c', 'd']);
     }
 
 

@@ -47,6 +47,12 @@ class CueWordsCard extends AbsCard implements HasIdGenerator
         parent::__construct();
     }
 
+    public function __sleep(): array
+    {
+        $fields =  parent::__sleep();
+        return array_merge($fields, ['title', 'content', 'suggestions']);
+    }
+
 
     public function toCardArray(): array
     {
@@ -65,6 +71,11 @@ class CueWordsCard extends AbsCard implements HasIdGenerator
         $card->setTitle($this->title);
         $card->setContent($this->content);
         return $card;
+    }
+
+    public static function mock()
+    {
+        return new static('title', 'content', ['a', 'b']);
     }
 
 

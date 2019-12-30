@@ -8,6 +8,7 @@ use Commune\Components\Predefined\Intents\Attitudes;
 use Commune\Components\Predefined\Intents\Loop;
 use Commune\Platform\DuerOS\Constants\Dictionary;
 use Commune\Platform\DuerOS\Providers\RenderServiceProvider;
+use Psr\Log\LogLevel;
 
 /**
  * @property-read string $privateKey 私钥的文件路径.
@@ -16,6 +17,8 @@ use Commune\Platform\DuerOS\Providers\RenderServiceProvider;
  * @property-read string $rePrompt 用户没有及时响应多轮对话时的回复.
  * @property-read string $renderServiceProvider 默认的rendering服务注册
  * @property-read string[] $sceneNames 场景映射的技能名称
+ *
+ * @property-read string $requestLogLevel 请求日志的级别
  */
 class DuerOSComponent extends ComponentOption
 {
@@ -61,6 +64,8 @@ class DuerOSComponent extends ComponentOption
             // 场景名称, 可以通过 scene 获取技能的名称.
             'sceneNames' => [
             ],
+
+            'requestLogLevel' => LogLevel::DEBUG,
         ];
     }
 

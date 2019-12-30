@@ -9,9 +9,9 @@ namespace Commune\Platform\DuerOS\Messages;
 
 
 use Baidu\Duer\Botsdk\Card\BaseCard;
-use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 
-abstract class AbsCard extends AbsMessage
+abstract class AbsCard extends AbsConvoMsg
 {
     abstract public function toCardArray() : array;
 

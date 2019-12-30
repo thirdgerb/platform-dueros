@@ -12,6 +12,8 @@ use Baidu\Duer\Botsdk\Nlu;
 use Baidu\Duer\Botsdk\Request;
 use Baidu\Duer\Botsdk\Response;
 use Baidu\Duer\Botsdk\Session;
+use Commune\Chatbot\App\Messages\QA\Confirm;
+use Commune\Platform\DuerOS\Messages\Cards\CueWordsCard;
 use PHPUnit\Framework\TestCase;
 
 class CueMessageCardTest extends TestCase
@@ -51,6 +53,20 @@ class CueMessageCardTest extends TestCase
         $this->assertEquals($words, $data['response']['card']['cueWords']);
     }
 
+    public function testQuestionCard()
+    {
+        $confirm = new Confirm('test');
+
+        $card = new CueWordsCard('', $confirm->getQuery(), $confirm->getSuggestions());
+
+        $dCard = $card->toDuerOSCard();
+        $dCard->setTitle('title');
+
+        $data = $dCard->getData();
+
+        $this->assertEquals('title', $data['title']);
+        $this->assertEquals('test', $data['content']);
+    }
 
     protected function getStubRequest() : array
     {

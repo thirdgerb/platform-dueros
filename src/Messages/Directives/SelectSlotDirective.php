@@ -9,6 +9,7 @@ namespace Commune\Platform\DuerOS\Messages\Directives;
 
 
 use Commune\Chatbot\OOHost\Context\Intent\IntentMessage;
+use Commune\Chatbot\OOHost\Context\Intent\PlaceHolderIntent;
 use Commune\Platform\DuerOS\Constants\Directives;
 use Commune\Platform\DuerOS\Constants\DuerOSIntent;
 use Commune\Platform\DuerOS\Messages\AbsDirective;
@@ -31,6 +32,11 @@ class SelectSlotDirective extends AbsDirective
     protected $suggestions;
 
     /**
+     * @var array
+     */
+    protected $directiveArray;
+
+    /**
      * SelectSlotDirective constructor.
      * @param IntentMessage $intent
      * @param string $entityName
@@ -42,8 +48,19 @@ class SelectSlotDirective extends AbsDirective
         $this->entityName = $entityName;
         $this->suggestions = $suggestions;
         parent::__construct();
+
+        $this->directiveArray = [
+            'type' => $this->getType(),
+            'slotToSelect' => $this->entityName,
+            'updatedIntent' => $this->getUpdatedIntent(),
+            'options' => $this->wrapOptions(),
+        ];
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['entityName', 'suggestions', 'directiveArray']);
+    }
 
     public function getType(): string
     {
@@ -52,12 +69,8 @@ class SelectSlotDirective extends AbsDirective
 
     public function toDirectiveArray(): array
     {
-        return [
-            'type' => $this->getType(),
-            'slotToSelect' => $this->entityName,
-            'updatedIntent' => $this->getUpdatedIntent(),
-            'options' => $this->wrapOptions(),
-        ];
+        return $this->directiveArray;
+
     }
 
     protected function wrapOptions() : array
@@ -133,6 +146,10 @@ class SelectSlotDirective extends AbsDirective
         return $slots;
     }
 
+    public static function mock()
+    {
+        return new static(new PlaceHolderIntent('test'), 'test', ['a', 'b']);
+    }
 
 
 }

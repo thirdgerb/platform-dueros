@@ -177,11 +177,6 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         $this->conversation->share(DuerRequest::class, $this->duerRequest);
         $this->conversation->share(DuerResponse::class, $this->duerResponse);
-
-        // debug 状态下方便调试, 记录请求
-        if ($this->botOption->chatbot->debug) {
-            $this->logger->debug('duerOS Request: ' . $this->rawInput);
-        }
     }
 
     /**
@@ -191,7 +186,8 @@ class DuerChatRequest extends SwooleHttpMessageRequest
     protected function doValidate(): bool
     {
         // 记录请求日志
-        $this->logger->info(
+        $this->logger->log(
+            $this->duerOSOption->requestLogLevel,
             'DuerChatRequest getRequest',
             [
                 'logId' => $this->duerRequest->getLogId(),
@@ -372,23 +368,27 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         // 记录有效request的日志
         $logger = $this->conversation->getLogger();
-        $logger->info('DuerChatRequest queryAndReply', [
-            'logId' => $this->duerRequest->getLogId(),
-            'query' => $this->duerRequest->getQuery(),
-            'outSpeech' => $data['outputSpeech'] ?? '',
-        ]);
-        $logger->info(
+
+        // 消息与回复日志
+        $logger->log(
+            $this->duerOSOption->requestLogLevel,
+            'DuerChatRequest queryAndReply',
+            [
+                'logId' => $this->duerRequest->getLogId(),
+                'query' => $this->duerRequest->getQuery(),
+                'outSpeech' => $data['outputSpeech'] ?? '',
+            ]
+        );
+
+        // 响应日志
+        $logger->log(
+            $this->duerOSOption->requestLogLevel,
             'DuerChatRequest finishResponse',
             [
                 'logId' => $this->duerRequest->getLogId(),
                 'output' => $output,
             ]
         );
-
-        // debug 状态下, 记录输入输出.
-        if ($this->botOption->chatbot->debug) {
-            $this->logger->debug("duerOS response: $output");
-        }
         // 完成渲染并退出.
         $this->response->write($output);
     }

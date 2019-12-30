@@ -8,9 +8,9 @@
 namespace Commune\Platform\DuerOS\Messages;
 
 
-use Commune\Chatbot\Framework\Messages\AbsMessage;
+use Commune\Chatbot\Framework\Messages\AbsConvoMsg;
 
-abstract class AbsDirective extends AbsMessage
+abstract class AbsDirective extends AbsConvoMsg
 {
     abstract public function getType() : string;
 

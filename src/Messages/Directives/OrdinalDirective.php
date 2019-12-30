@@ -37,6 +37,11 @@ class OrdinalDirective extends AbsDirective
         parent::__construct();
     }
 
+    public function __sleep(): array
+    {
+        return array_merge(parent::__sleep(), ['entityName', 'suggestions']);
+    }
+
     /**
      * @return array
      */
@@ -113,6 +118,11 @@ class OrdinalDirective extends AbsDirective
         }
 
         return $option;
+    }
+
+    public static function mock()
+    {
+        return new static(['a', 'b'], 'c');
     }
 
 
