@@ -47,6 +47,8 @@ class CueMessageCardTest extends TestCase
         $data = json_decode($output, true);
 
         $this->assertEquals('title', $data['response']['card']['title']);
+        $this->assertEquals('content', $data['response']['card']['content']);
+        $this->assertEquals($words, $data['response']['card']['cueWords']);
     }
 
 

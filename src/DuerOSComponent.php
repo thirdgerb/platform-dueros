@@ -24,11 +24,12 @@ class DuerOSComponent extends ComponentOption
     {
         return [
 
+            // 回复渲染所用服务.
             'renderServiceProvider' => RenderServiceProvider::class,
 
             'privateKey' => '',
 
-            // 系统
+            // 系统重试语句
             'rePrompt' => '没听清, 请再说一次?',
 
             /**
@@ -49,6 +50,7 @@ class DuerOSComponent extends ComponentOption
 
             ],
 
+            // 实体映射的名称, 可用于 duer实体词典和本地的转义
             'entityMapping' => [
                 'dialogue.ordinal' => [
                     Dictionary::SYSTEM_NUMBER => 'ordinal'
@@ -56,6 +58,7 @@ class DuerOSComponent extends ComponentOption
 
             ],
 
+            // 场景名称, 可以通过 scene 获取技能的名称.
             'sceneNames' => [
             ],
         ];

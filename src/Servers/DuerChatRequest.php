@@ -3,20 +3,17 @@
 namespace Commune\Platform\DuerOS\Servers;
 
 use Baidu\Duer\Botsdk\Card\BaseCard;
-use Baidu\Duer\Botsdk\Card\StandardCard;
 use Commune\Chatbot\App\Messages\Media\Audio;
 use Commune\Chatbot\App\Messages\Text;
 use Commune\Chatbot\Blueprint\Conversation\ConversationMessage;
 use Commune\Chatbot\Blueprint\Conversation\NLU;
 use Commune\Chatbot\Blueprint\Message\Message;
 use Commune\Chatbot\Blueprint\Message\Replies\SSML;
-use Commune\Chatbot\Blueprint\Message\Tags\Conversational;
 use Commune\Chatbot\Blueprint\Message\VerbalMsg;
 use Commune\Chatbot\App\Messages\Events\QuitEvt;
 use Commune\Chatbot\App\Messages\Events\StartEvt;
 use Commune\Platform\DuerOS\Constants\EndSession;
 use Commune\Platform\DuerOS\DuerOSComponent;
-use Commune\Platform\DuerOS\Events\DialogComplete;
 use Commune\Platform\DuerOS\Messages\AbsCard;
 use Commune\Platform\DuerOS\Messages\AbsDirective;
 use Commune\Platform\DuerOS\Messages\RePrompt;
@@ -167,6 +164,11 @@ class DuerChatRequest extends SwooleHttpMessageRequest
 
         // 默认回复
         $this->rePrompt = $this->duerOSOption->rePrompt;
+
+        // debug 状态下方便调试, 记录请求
+        if ($this->botOption->chatbot->debug) {
+            $this->logger->debug("duerOS Request: $rawInput");
+        }
     }
 
     /**
@@ -381,14 +383,10 @@ class DuerChatRequest extends SwooleHttpMessageRequest
             ]
         );
 
-        // 触发事件, 可用于记录来回消息.
-        $event = new DialogComplete(
-            $this->conversation->getTraceId(),
-            $this->input,
-            $output
-        );
-        $this->conversation->fire($event);
-
+        // debug 状态下, 记录输入输出.
+        if ($this->botOption->chatbot->debug) {
+            $this->logger->debug("duerOS response: $output");
+        }
         // 完成渲染并退出.
         $this->response->write($output);
     }
